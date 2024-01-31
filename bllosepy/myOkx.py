@@ -84,10 +84,16 @@ class myOkx():
         if not ccy in self.volume_map:
             self.volume_map[ccy] = {'buy': 0.00, 'sale': 0.00}
         result = self.tradingDataAPI.get_taker_volume(ccy=ccy, instType=instType, begin=start)
+        if result is None or result['data'] is None or len(result['data']) == 0:
+            return self.volume_map
+
         max_time_stamp = 0
+        if not 'data' in self.volume_map:
+           self.volume_map['data'] = result['data']
         
-        if start != '' and int(result['data'][-1][0]) == int(start):
+        if start != '' and result['data'] is not None and int(result['data'][-1][0]) == int(start):
             result['data'].pop()
+            self.volume_map['data']
         for cur in result['data']:
             cur_time_stamp = int(cur[0])
             if cur_time_stamp > max_time_stamp:
@@ -141,8 +147,8 @@ class myOkx():
         return self.fundingAPI.get_currencies()
 
 
-if __name__ == '__main__':
-    myOkx = myOkx("pro")
+# if __name__ == '__main__':
+    # myOkx = myOkx("pro")
     # myOkx.show_valuation()
     # myOkx.is_support("ADA")
-    myOkx.volume_taker(start='1705821600000')
+    # myOkx.volume_taker(start='1705821600000')
