@@ -1,52 +1,27 @@
 <script>
-let categories = (function () {
-    let now = new Date();
-    let res = [];
-    let len = 10;
-    while (len--) {
-        res.unshift(now.toLocaleTimeString().replace(/^\D*/, ''));
-        now = new Date(+now - 2000);
-    }
-    return res;
-})();
-let categories2 = (function () {
-    let res = [];
-    let len = 10;
-    while (len--) {
-        res.push(10 - len - 1);
-    }
-    return res;
-})();
-let data = (function () {
-    let res = [];
-    let len = 10;
-    while (len--) {
-        res.push(Math.round(Math.random() * 1000));
-    }
-    return res;
-})();
-let data2 = (function () {
-    let res = [];
-    let len = 0;
-    while (len < 10) {
-        res.push(+(Math.random() * 10 + 5).toFixed(1));
-        len++;
-    }
-    return res;
-})();
 let count = 11;
-
+let localCat = []
+let localCat2 = []
+let localData = []
+let localData2 = []
 
 export default {
     props: ["id", "data"], //接受从父组件传回的值
+    mounted() {
+        this.drawBar(this.data)
+    },
     methods: {
         drawBar({
-            textTile = '',  // 标题 柱状图options里需要用的数据这里作为参数从data里面取值
-            totalText = '',//标签
-            nameArray = [],//x轴的数据
-            series = [],//series的数据
+            categories = [],
+            categories2 = [],
+            data = [],
+            data2 = [],
         } = {}  //作为一个整体的参数
         ) {
+            localCat = categories;
+            localCat2 = categories2;
+            localData = data;
+            localData2 = data2;
             let myChart = this.$echarts.init(document.getElementById(this.id));
             let option = {
                 title: {
@@ -79,12 +54,12 @@ export default {
                     {
                         type: 'category',
                         boundaryGap: true,
-                        data: categories
+                        data: localCat
                     },
                     {
                         type: 'category',
                         boundaryGap: true,
-                        data: categories2
+                        data: localCat2
                     }
                 ],
                 yAxis: [
@@ -111,12 +86,12 @@ export default {
                         type: 'bar',
                         xAxisIndex: 1,
                         yAxisIndex: 1,
-                        data: data
+                        data: localData
                     },
                     {
                         name: 'Dynamic Line',
                         type: 'line',
-                        data: data2
+                        data: localData2
                     }
                 ]
             };
@@ -125,37 +100,34 @@ export default {
 
             setInterval(function () {
                 let axisData = new Date().toLocaleTimeString().replace(/^\D*/, '');
-                data.shift();
-                data.push(Math.round(Math.random() * 1000));
-                data2.shift();
-                data2.push(+(Math.random() * 10 + 5).toFixed(1));
-                categories.shift();
-                categories.push(axisData);
-                categories2.shift();
-                categories2.push(count++);
+                localData.shift();
+                localData.push(Math.round(Math.random() * 1000));
+                localData2.shift();
+                localData2.push(+(Math.random() * 10 + 5).toFixed(1));
+                localCat.shift();
+                localCat.push(axisData);
+                localCat2.shift();
+                localCat2.push(count++);
                 myChart.setOption({
                     xAxis: [
                         {
-                            data: categories
+                            data: localCat
                         },
                         {
-                            data: categories2
+                            data: localCat2
                         }
                     ],
                     series: [
                         {
-                            data: data
+                            data: localData
                         },
                         {
-                            data: data2
+                            data: localData2
                         }
                     ]
                 });
             }, 2100);
         }
-    },
-    mounted() {
-        this.drawBar(this.data)
     }
 }
 </script>
