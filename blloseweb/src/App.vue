@@ -2,6 +2,7 @@
 import BarChart from "./myComponents/bar.vue";
 import PieChart from "./myComponents/pie.vue";
 import Dynamic from "./myComponents/dynamic.vue";
+import axios from 'axios';
 
 export default {
   name: "About",
@@ -33,6 +34,23 @@ export default {
   },
   methods: {
     getSeries() {
+      axios.defaults.crossDomain = true;
+      axios.defaults.headers.common['Access-Control-Allow-Origin'] = true;
+      axios.get('http://127.0.0.1:5000/volume',{headers: {'Access-Control-Allow-Origin': "true"}})
+        .then(response => {
+          console.log(response)
+          resData = response['data']
+          for (i = 0; i < 10; i++) {
+            this.objectData2.categories.unshift(new Date(Number(resData[i][0])).toLocaleTimeString())
+            let seller = Number(resData[i][1])
+            let buyer = Number(resData[i][2])
+            let total = seller + buyer
+            this.objectData2.data2.unshift(buyer / total)
+            this.objectData2.data.unshift(buyer)
+          }
+        })
+        .catch(error => { });
+      debugger
       this.objectData2.categories = (function () {
         let res = [];
         let len = 10;
@@ -40,61 +58,61 @@ export default {
           res.push(10 - len - 1);
         }
         return res;
-      })(),
+      })();
 
-        this.objectData2.categories2 = (function () {
-          let res = [];
-          let len = 10;
-          while (len--) {
-            res.push(10 - len - 1);
-          }
-          return res;
-        })(),
+      this.objectData2.categories2 = (function () {
+        let res = [];
+        let len = 10;
+        while (len--) {
+          res.push(10 - len - 1);
+        }
+        return res;
+      })();
 
-        this.objectData2.data = (function () {
-          let res = [];
-          let len = 10;
-          while (len--) {
-            res.push(Math.round(Math.random() * 1000));
-          }
-          return res;
-        })(),
+      this.objectData2.data = (function () {
+        let res = [];
+        let len = 10;
+        while (len--) {
+          res.push(Math.round(Math.random() * 1000));
+        }
+        return res;
+      })();
 
-        this.objectData2.data2 = (function () {
-          let res = [];
-          let len = 0;
-          while (len < 10) {
-            res.push(+(Math.random() * 10 + 5).toFixed(1));
-            len++;
-          }
-          return res;
-        })(),
-        this.flag = true,
-        this.objectData.series.push({
-          name: '温度',
-          type: "bar",
-          barWidth: "20%",
-          data: ['32', '30', '28', '29', '36', '33', '25'],
-          itemStyle: {
-            normal: {
-              //好，这里就是重头戏了，定义一个list，然后根据所以取得不同的值，这样就实现了，
-              color: function (params) {
-                // build a color map as your need.
-                var colorList = [
-                  '#C1232B', '#B5C334', '#FCCE10', '#E87C25', '#27727B',
-                  '#FE8463', '#9BCA63', '#FAD860', '#F3A43B', '#60C0DD',
-                  '#D7504B', '#C6E579', '#F4E001', '#F0805A', '#26C0C0'
-                ];
-                return colorList[params.dataIndex]
-              },
-              label: {
-                show: true,
-                position: 'top',
-                formatter: '{c}'
-              }
+      this.objectData2.data2 = (function () {
+        let res = [];
+        let len = 0;
+        while (len < 10) {
+          res.push(+(Math.random() * 10 + 5).toFixed(1));
+          len++;
+        }
+        return res;
+      })();
+      this.flag = true;
+      this.objectData.series.push({
+        name: '温度',
+        type: "bar",
+        barWidth: "20%",
+        data: ['32', '30', '28', '29', '36', '33', '25'],
+        itemStyle: {
+          normal: {
+            //好，这里就是重头戏了，定义一个list，然后根据所以取得不同的值，这样就实现了，
+            color: function (params) {
+              // build a color map as your need.
+              var colorList = [
+                '#C1232B', '#B5C334', '#FCCE10', '#E87C25', '#27727B',
+                '#FE8463', '#9BCA63', '#FAD860', '#F3A43B', '#60C0DD',
+                '#D7504B', '#C6E579', '#F4E001', '#F0805A', '#26C0C0'
+              ];
+              return colorList[params.dataIndex]
+            },
+            label: {
+              show: true,
+              position: 'top',
+              formatter: '{c}'
             }
           }
-        });
+        }
+      });
 
       this.objectData1.series.push({
         name: '数量',

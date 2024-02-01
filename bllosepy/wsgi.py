@@ -12,7 +12,8 @@ def hello_world():
 @app.get("/volume")
 def okx_volume_taker():
     m.volume_map = {}
-    return m.volume_taker()
+    m.volume_taker()
+    return m.volume_map
 
 @app.get("/volume/continue")
 def okx_volume_taker_continue():

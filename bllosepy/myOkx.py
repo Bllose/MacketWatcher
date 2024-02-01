@@ -87,8 +87,8 @@ class myOkx():
         if result is None or result['data'] is None or len(result['data']) == 0:
             return self.volume_map
 
-        max_time_stamp = 0
-        min_time_stamp = time.time() * 1000
+        max_time_stamp = self.volume_map['max_time_stamp'] if ('max_time_stamp' in self.volume_map) else 0
+        min_time_stamp = self.volume_map['min_time_stamp'] if ('min_time_stamp' in self.volume_map) else time.time() * 1000
         if not 'data' in self.volume_map:
            self.volume_map['data'] = result['data']
         
@@ -110,7 +110,7 @@ class myOkx():
             self.volume_map[ccy]['max_time_stamp'] = max_time_stamp # 记录的最新时间
             self.volume_map[ccy]['min_time_stamp'] = min_time_stamp # 记录的起始时间
         logging.info('>>>>>>' + ccy + '<<<<<< ' + json.dumps(self.volume_map[ccy]))
-        return self.volume_map
+        return result['data']
     
     def keep_volume(self, ccyList = ['BTC']):
         for index in range(3):
