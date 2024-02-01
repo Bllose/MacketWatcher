@@ -22,8 +22,6 @@ def okx_volume_taker_continue():
     data_holded = m.volume_map
     return m.volume_taker(start = data_holded["BTC"]["max_time_stamp"])
 
-
-
 @app.get("/env/<string:env>")
 def okx_check(env):
     if env == 'pro':

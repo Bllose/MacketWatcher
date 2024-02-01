@@ -88,22 +88,27 @@ class myOkx():
             return self.volume_map
 
         max_time_stamp = 0
+        min_time_stamp = time.time() * 1000
         if not 'data' in self.volume_map:
            self.volume_map['data'] = result['data']
         
         if start != '' and result['data'] is not None and int(result['data'][-1][0]) == int(start):
             result['data'].pop()
-            self.volume_map['data']
+            # 将新查询到的数据添加到历史记录中
+            self.volume_map['data'].extend(result['data'])
         for cur in result['data']:
             cur_time_stamp = int(cur[0])
             if cur_time_stamp > max_time_stamp:
                 max_time_stamp = cur_time_stamp
+            if cur_time_stamp < min_time_stamp:
+                min_time_stamp = cur_time_stamp
             sale = float(cur[1])
             buy = float(cur[2])
             self.volume_map[ccy]['buy'] += buy
             self.volume_map[ccy]['sale'] += sale
         if max_time_stamp > 0:
-            self.volume_map[ccy]['max_time_stamp'] = max_time_stamp
+            self.volume_map[ccy]['max_time_stamp'] = max_time_stamp # 记录的最新时间
+            self.volume_map[ccy]['min_time_stamp'] = min_time_stamp # 记录的起始时间
         logging.info('>>>>>>' + ccy + '<<<<<< ' + json.dumps(self.volume_map[ccy]))
         return self.volume_map
     
